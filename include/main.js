@@ -21,6 +21,31 @@ $('#us3').locationpicker({
 if($('#submitButton').length > 0){
 	document.getElementById("submitButton").onclick = submitButton;
 }
+if($('#search').length > 0){
+	document.getElementById("search").onkeyup = search;
+}
+function search(){
+	$('#search').val()
+
+	$('#loader').attr('class', 'preloader-wrapper active')
+	$.post(HOST + "getplaces",
+	{
+		search: $('#search').val(),
+	},
+	function(data, status){
+		console.log(data)
+		$('#loader').hide();
+		$('#searchCollection').empty();
+		var value = '';
+		for(var i=0; i<data.length; i++){
+			value += getItemTpl(data[i].name, data[i].lat, data[i].lng, data[i].status, '200', data[i].icon, data[i].place_id);
+		}
+		$('#searchCollection').append(value);
+
+	});
+	
+
+}
 function submitButton(){
 	$('#loader').attr('class', 'preloader-wrapper small active')
 	$.post(HOST + "submit",
@@ -49,15 +74,9 @@ if($('#submissionCollection').length > 0){
 		console.log(data)
 		var value = '';
 		for(var i=0; i<data.length; i++){
-			value += getItemTpl(data[i].datetime, data[i].lat, data[i].lng, data[i].radius, data[i].status);
+			value += getItemTpl(data[i].datetime, data[i].lat, data[i].lng, data[i].radius, data[i].status, '', '');
 		}
 		$('#submissionCollection').append(value);
-		// if(data == 'Submission Success'){
-		// 	window.location="submissions.html";
-		// }else{
-
-		// }
-
 	});
 }
 
@@ -70,26 +89,79 @@ function serviceSingleSubmission(){
 		window.location="submissions.html";
 	});
 }
+function getsingleplace(place_id){
+	console.log('place_id: ' + place_id)
+	$.post(HOST + "getsingleplace",
+	{
+		place_id: place_id
+	},
+	function(data, status){
+		console.log(data)
+		var data = JSON.parse(data[0].json2);
+		console.log(data)
+		var data = data.result;
+		console.log(data)
 
-function getItemTpl(datetime, lat, lng, radius, status){
+		var reviewHtml = '<b>Reviews: </b><br/>';
+		if(data.reviews != undefined){
+			for(var i=0; i<data.reviews.length; i++){
+				if(data.reviews[i].profile_photo_url != undefined)
+				reviewHtml += '<img src="' + data.reviews[i].profile_photo_url + '" height=30px width=auto>';
+				reviewHtml += '<b>' + data.reviews[i].author_name + '</b>: ' + data.reviews[i].text + '<br>';
+
+			}
+		}
+		
+		var openinghoursHtml = '<b>Opening Hours: </b><br/>';
+		if(data.opening_hours != undefined){
+			if(data.opening_hours.weekday_text != undefined){
+				for(var i=0; i<data.opening_hours.weekday_text.length; i++){
+					openinghoursHtml += data.opening_hours.weekday_text[i] + '<br>';
+
+				}
+			}
+		}
+
+		swal({   
+			title: data.name,   
+			text: '<b>Website: </b><a href="' + data.website + '" target="_blank"> ' + data.website + ' </a><br/>' +
+					'<b>Address: </b>' + data.formatted_address + '<br/>' +
+					'<b>Phone: </b>' + data.formatted_phone_number + '<br/>' + '<br/>' +
+					openinghoursHtml + '<br/>' +
+					reviewHtml
+					,   
+			html: true 
+		});
+	});
+}
+
+function getItemTpl(datetime, lat, lng, radius, status, icon, place_id){
 	var value = '<a onclick="serviceSingleSubmission()">';
+	if(status == '200'){
+		value = '<a onclick="getsingleplace(\'' + place_id + '\')">';
+	}
 	value += '<li class="collection-item avatar">';
+	var parsedDateTimeValue = parseTwitterDate(datetime);
+	var parsedRadius = 'Radius: ' + radius;
 	if(status == '0'){
 		value += '<i class="material-icons circle red">repeat</i>';
-	}else{
+	}else if(status == '1'){
 		value += '<i class="material-icons circle green">done</i>';
+	}else if(status == '200'){
+		value += '<img src="' + icon + '" alt="" class="circle">';
+		parsedDateTimeValue = datetime;
+		parsedRadius = 'Status: ' + radius;
 	}
 	value += '<span class="title">'+
-		parseTwitterDate(datetime) +
+		parsedDateTimeValue +
 		'</span>' +
 		'<p>' +
 		parseFloat(lat).toFixed(2) + ', ' + parseFloat(lng).toFixed(2) +
-		'<br/>' +
-		'Radius: ' +
-		radius +
+		'<br/>'+
+		parsedRadius+
 		'</p>' +
-		'</li>'+
-		'</a>';
+		'</li>';
+
 	return value;
 }
 
