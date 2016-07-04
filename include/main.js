@@ -124,11 +124,14 @@ function getsingleplace(place_id){
 
 		swal({   
 			title: data.name,   
-			text: '<b>Website: </b><a href="' + data.website + '" target="_blank"> ' + data.website + ' </a><br/>' +
+			text: '<table><tr><td>'
+			'<b>Website: </b><a href="' + data.website + '" target="_blank"> ' + data.website + ' </a><br/>' +
 					'<b>Address: </b>' + data.formatted_address + '<br/>' +
 					'<b>Phone: </b>' + data.formatted_phone_number + '<br/>' + '<br/>' +
 					openinghoursHtml + '<br/>' +
-					reviewHtml
+					'</td><td>'+
+					reviewHtml+
+					'</td></tr></table>'
 					,   
 			html: true 
 		});
