@@ -96,13 +96,13 @@ function getsingleplace(place_id){
 		place_id: place_id
 	},
 	function(data, status){
-		console.log(data)
+		// console.log(data)
 		var data = JSON.parse(data[0].json2);
-		console.log(data)
+		// console.log(data)
 		var data = data.result;
 		console.log(data)
 
-		var reviewHtml = '<b>Reviews: </b><br/>';
+		var reviewHtml = '<b>Reviews: </b><br/><div style="font-size: smaller;">';
 		if(data.reviews != undefined){
 			for(var i=0; i<data.reviews.length; i++){
 				if(data.reviews[i].profile_photo_url != undefined)
@@ -111,7 +111,8 @@ function getsingleplace(place_id){
 
 			}
 		}
-		
+		reviewHtml += '</div>'
+
 		var openinghoursHtml = '<b>Opening Hours: </b><br/>';
 		if(data.opening_hours != undefined){
 			if(data.opening_hours.weekday_text != undefined){
@@ -124,12 +125,12 @@ function getsingleplace(place_id){
 
 		swal({   
 			title: data.name,   
-			text: '<table><tr><td>'
+			text: '<table><tr><td width="50%">'+
 			'<b>Website: </b><a href="' + data.website + '" target="_blank"> ' + data.website + ' </a><br/>' +
 					'<b>Address: </b>' + data.formatted_address + '<br/>' +
 					'<b>Phone: </b>' + data.formatted_phone_number + '<br/>' + '<br/>' +
 					openinghoursHtml + '<br/>' +
-					'</td><td>'+
+					'</td><td width="50%">'+
 					reviewHtml+
 					'</td></tr></table>'
 					,   
