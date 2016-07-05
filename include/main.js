@@ -103,7 +103,7 @@ function getsingleplace(place_id){
 		var data = data.result;
 		console.log(data)
 
-		var reviewHtml = '<b>Reviews: </b><br/><div style="font-size: smaller;">';
+		var reviewHtml = '<div style="font-size: smaller;">';
 		if(data.reviews != undefined){
 			for(var i=0; i<data.reviews.length; i++){
 				if(data.reviews[i].profile_photo_url != undefined)
