@@ -1,5 +1,7 @@
 HOST = 'https://get-more-business.herokuapp.com/';
 // HOST = 'http://localhost:5000/';
+HOST_WebTracker = 'http://13.85.67.124:4002/';
+HOST_WebTracker_IMAGE = 'http://13.85.67.124/Website-Tracker-and-Screenshot/';
 
 $('#us3').locationpicker({
 	location: {
@@ -124,19 +126,36 @@ function getsingleplace(place_id){
 			}
 		}
 
-		swal({   
-			title: data.name,   
-			text: '<table><tr><td width="50%">'+
-			'<b>Website: </b><a href="' + data.website + '" target="_blank"> ' + data.website + ' </a><br/>' +
-					'<b>Address: </b>' + data.formatted_address + '<br/>' +
-					'<b>Phone: </b>' + data.formatted_phone_number + '<br/>' + '<br/>' +
-					openinghoursHtml + '<br/>' +
-					'</td><td width="50%">'+
-					reviewHtml+
-					'</td></tr></table>'
-					,   
-			html: true 
+		$.post(HOST_WebTracker + "get",
+		{
+			url: data.website,
+			// url: 'google.com',
+			type: 'both'
+		},
+		function(dataNew, status){  
+			var webImage = '';
+			for(var i=0; i<dataNew.length; i++){
+				if(dataNew[i].type == 'web'){
+					webImage = HOST_WebTracker_IMAGE + dataNew[i].imageName;
+				}
+			}
+			swal({   
+				title: data.name,   
+				text: '<table><tr><td width="50%">'+
+				'<b>Website: </b><a href="' + data.website + '" target="_blank"> ' + data.website + ' </a><br/>' +
+						'<b>Address: </b>' + data.formatted_address + '<br/>' +
+						'<b>Phone: </b>' + data.formatted_phone_number + '<br/>' + '<br/>' +
+						// openinghoursHtml + '<br/>' +
+						'<img height="250px" width="333px" src="' + webImage + '">'+
+						'</td><td width="50%">'+
+						reviewHtml+
+						'</td></tr></table>'
+						,   
+				html: true 
+			});
+
 		});
+		
 	});
 }
 
