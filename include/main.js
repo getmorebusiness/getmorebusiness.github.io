@@ -105,18 +105,18 @@ function getsingleplace(place_id){
 		var data = data.result;
 		console.log(data)
 
-		var reviewHtml = '<div style="font-size: smaller;">';
+		var reviewHtml = '<b>Reviews: </b><br/><div style="font-size: x-small;">';
 		if(data.reviews != undefined){
 			for(var i=0; i<data.reviews.length; i++){
 				if(data.reviews[i].profile_photo_url != undefined)
 				reviewHtml += '<img src="' + data.reviews[i].profile_photo_url + '" height=30px width=auto>';
-				reviewHtml += '<b>' + data.reviews[i].author_name + '</b>: ' + data.reviews[i].text + '<br>';
-
+				reviewHtml += '<b>' + data.reviews[i].author_name + '</b>: ' + 
+				limitData(data.reviews[i].text, 200) + '<br>';
 			}
 		}
-		reviewHtml += '</div>'
+		reviewHtml += '</div>';
 
-		var openinghoursHtml = '<b>Opening Hours: </b><br/>';
+		var openinghoursHtml = '<b>Opening Hours: </b><br/><div style="font-size: x-small;">';
 		if(data.opening_hours != undefined){
 			if(data.opening_hours.weekday_text != undefined){
 				for(var i=0; i<data.opening_hours.weekday_text.length; i++){
@@ -125,6 +125,7 @@ function getsingleplace(place_id){
 				}
 			}
 		}
+		openinghoursHtml += '</div>';
 
 		$.post(HOST_WebTracker + "get",
 		{
@@ -145,9 +146,9 @@ function getsingleplace(place_id){
 				'<b>Website: </b><a href="' + data.website + '" target="_blank"> ' + data.website + ' </a><br/>' +
 						'<b>Address: </b>' + data.formatted_address + '<br/>' +
 						'<b>Phone: </b>' + data.formatted_phone_number + '<br/>' + '<br/>' +
-						// openinghoursHtml + '<br/>' +
 						'<img height="250px" width="333px" src="' + webImage + '">'+
 						'</td><td width="50%">'+
+						openinghoursHtml + '<br/>' +
 						reviewHtml+
 						'</td></tr></table>'
 						,   
@@ -159,6 +160,9 @@ function getsingleplace(place_id){
 	});
 }
 
+function limitData(text, value){
+	return text.substring(0, value) + '...';
+}
 function getItemTpl(datetime, lat, lng, radius, status, icon, place_id){
 	var value = '<a onclick="serviceSingleSubmission()">';
 	if(status == '200'){
