@@ -182,7 +182,8 @@ function getItemTpl(datetime, lat, lng, radius, status, icon, place_id){
 	}else if(status == '200'){
 		value += '<img src="' + icon + '" alt="" class="circle">';
 		parsedDateTimeValue = datetime;
-		parsedRadius = 'Status: ' + radius;
+		parsedRadius = '';
+		// parsedRadius = 'Status: ' + radius;
 	}
 	value += '<span class="title">'+
 		parsedDateTimeValue +
