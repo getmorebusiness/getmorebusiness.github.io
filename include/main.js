@@ -2,6 +2,7 @@ HOST = 'https://get-more-business.herokuapp.com/';
 // HOST = 'http://localhost:5000/';
 HOST_WebTracker = 'http://13.85.67.124:4002/';
 HOST_WebTracker_IMAGE = 'http://13.85.67.124/Website-Tracker-and-Screenshot/';
+HOST_SingleView = 'http://13.85.67.124/Website-Tracker-and-Screenshot/web/singleview.html?url=';
 
 $('#us3').locationpicker({
 	location: {
@@ -36,7 +37,7 @@ function search(){
 		search: $('#search').val(),
 	},
 	function(data, status){
-		console.log(data)
+		// console.log(data)
 		$('#loader').hide();
 		$('#searchCollection').empty();
 		var value = '';
@@ -93,7 +94,7 @@ function serviceSingleSubmission(){
 	});
 }
 function getsingleplace(place_id){
-	console.log('place_id: ' + place_id)
+	// console.log('place_id: ' + place_id)
 	$.post(HOST + "getsingleplace",
 	{
 		place_id: place_id
@@ -103,7 +104,7 @@ function getsingleplace(place_id){
 		var data = JSON.parse(data[0].json2);
 		// console.log(data)
 		var data = data.result;
-		console.log(data)
+		// console.log(data)
 
 		var reviewHtml = '<b>Reviews: </b><br/><div style="font-size: x-small;">';
 		if(data.reviews != undefined){
@@ -135,9 +136,11 @@ function getsingleplace(place_id){
 		},
 		function(dataNew, status){  
 			var webImage = '';
+			var urlImage = '';
 			for(var i=0; i<dataNew.length; i++){
 				if(dataNew[i].type == 'web'){
 					webImage = HOST_WebTracker_IMAGE + dataNew[i].imageName;
+					urlImage = HOST_SingleView + dataNew[i].url;
 				}
 			}
 			swal({   
@@ -146,7 +149,8 @@ function getsingleplace(place_id){
 				'<b>Website: </b><a href="' + data.website + '" target="_blank"> ' + data.website + ' </a><br/>' +
 						'<b>Address: </b>' + data.formatted_address + '<br/>' +
 						'<b>Phone: </b>' + data.formatted_phone_number + '<br/>' + '<br/>' +
-						'<img height="250px" width="333px" src="' + webImage + '">'+
+						'<a target="_blank" href="' + urlImage + '">' +
+						'<img height="250px" width="333px" src="' + webImage + '"></a>'+
 						'</td><td width="50%">'+
 						openinghoursHtml + '<br/>' +
 						reviewHtml+
